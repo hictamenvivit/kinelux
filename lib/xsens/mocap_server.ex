@@ -46,7 +46,9 @@ defmodule Xsens.MocapServer do
     {:ok, parsed_first_segment} = Xsens.MocapData.parse_message_body(rest)
     parsed_first_segment_with_tc = Map.put(parsed_first_segment, :tc, tc)
 
-    send(:artnet_server, parsed_first_segment_with_tc)
+    Bucket.update(:bucket, parsed_first_segment_with_tc )
+
+    # send(:bucket, )
     # send(:websocket_server, parsed_first_segment)
   end
 

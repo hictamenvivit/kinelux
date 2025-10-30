@@ -8,7 +8,8 @@ defmodule Kinelux do
   def start(_type, _args) do
     children = [
       {Xsens.MocapServer, {5005, :mocap_server}},
-      {DMX.ArtnetServer, {6454, :artnet_server}}
+      {DMX.ArtnetServer, {6454, :artnet_server}},
+      {Bucket, {:bucket}}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
