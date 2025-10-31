@@ -33,14 +33,14 @@ defmodule Bucket do
   def init(_args) do
     state = %{
       position_data: %{
-        x: 0,
-        y: 0,
-        z: 0,
-        rx: 0,
-        ry: 0,
-        rz: 0,
-        speed: 0,
-        tc: 0
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+        rx: 0.0,
+        ry: 0.0,
+        rz: 0.0,
+        speed: 0.0,
+        tc: 0.0
       }
     }
 
@@ -48,7 +48,7 @@ defmodule Bucket do
   end
 
   @impl true
-  def handle_call({:get}, _from, state) do
+  def handle_call(:get, _from, state) do
     {:reply, state.position_data, state}
   end
 
@@ -71,8 +71,6 @@ defmodule Bucket do
       tc: new_position.tc,
       speed: speed
     }
-
-    IO.puts("Speed is now #{speed}")
 
     state = put_in(state.position_data, position_data)
     {:reply, :ok, state}

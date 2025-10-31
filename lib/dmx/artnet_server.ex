@@ -4,14 +4,14 @@ defmodule DMX.ArtnetServer do
 
   def start_link({port, name}) do
     GenServer.start_link(__MODULE__, port, name: name)
-    Task.start_link(&loop_send_frame/0)
   end
 
   @impl true
   @spec init(any()) :: {:ok, %{socket: port() | {:"$inet", atom(), any()}}}
   def init(_port) do
     {:ok, socket} = :gen_udp.open(0, [:binary])
-    {:ok, %{socket: socket}}
+    Process.send(self(), :send_frame, [])
+    {:ok, %{socket: socket, seq: 0}}
   end
 
   @impl true
@@ -21,39 +21,40 @@ defmodule DMX.ArtnetServer do
     {:noreply, state}
   end
 
-  defp loop_send_frame(seq \\ 0) do
-    :timer.sleep(trunc(1000 / 40))
-    GenServer.cast(self(), {:send_frame, seq})
-    IO.puts("AAAAA")
-
-    new_seq = rem(seq, 255) + 1
-    loop_send_frame(new_seq)
-    # {:ok}
+  defp write_to_file(filename, data) do
+    File.open(filename, [:append])
+    |> elem(1)
+    |> IO.binwrite(data)
   end
 
   @impl true
-  def handle_cast({:send_frame, seq}, %{socket: socket} = state) do
-    IO.puts("😃")
+  def handle_info(:send_frame, %{socket: socket, seq: seq} = state) do
+    Process.send_after(self(), :send_frame, trunc(1000 / 40))
     position = Bucket.get(:bucket)
-    dmx_value = scale(position.speed * 100, 0, 15)
+    dmx_value_speed = scale(position.speed * 100, 0, 60)
+    dmx_value_x = scale(position.x, -400, 400)
+
+    IO.puts("Speed * 100 =  #{position.speed * 100}, dmx_value = #{dmx_value_speed} ")
 
     mapping = %{
-      201 => dmx_value
+      201 => 0,
+      202 => 0
       # 202 => scale(speedX * 100, 0, 125)
     }
 
     frame = DMX.ArtnetFrame.build_frame(mapping, seq)
+    # write_to_file("DATA", frame)
     # TODO: retrieve port properly
     # TODO: retrieve address properly
     # IO.puts("sending frame #{message}")
     :gen_udp.send(socket, {2, 0, 0, 1}, 6454, frame)
-    IO.puts("Sent frame")
+
     {:noreply, state}
   end
 
   defp scale(value, minimum \\ 0, maximum \\ 100) do
     spread = maximum - minimum
     calculated = trunc((value - minimum) * (255 / spread))
-    trunc(max(0, min(512, calculated)))
+    trunc(max(0, min(255, calculated)))
   end
 end

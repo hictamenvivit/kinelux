@@ -29,7 +29,7 @@ defmodule Xsens.MocapServer do
         handle_type(type, message_content)
 
       {:error, reason} ->
-        IO.puts("Failed to parse UDP packet: #{inspect(reason)}")
+        # IO.puts("Failed to parse UDP packet: #{inspect(reason)}")
     end
 
     {:noreply, state}
@@ -53,10 +53,10 @@ defmodule Xsens.MocapServer do
   end
 
   defp handle_type(:type12, _content) do
-    IO.puts("Received type 12")
+    # IO.puts("Received type 12")
   end
 
   defp handle_type(:type13, _content) do
-    IO.puts("Received type 13")
+    # IO.puts("Received type 13")
   end
 end

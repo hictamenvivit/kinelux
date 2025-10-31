@@ -9,7 +9,8 @@ defmodule Kinelux do
     children = [
       {Xsens.MocapServer, {5005, :mocap_server}},
       {DMX.ArtnetServer, {6454, :artnet_server}},
-      {Bucket, {:bucket}}
+      {Bucket, {:bucket}},
+      {Visualisation.Dashboard, {:dashboard}}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
