@@ -15,8 +15,24 @@ defmodule Xsens.MocapData do
   def parse(_), do: {:error, "Invalid frame"}
 
   def parse_message_body(<<data::binary-size(644)>>) do
-    <<first_segment::binary-size(28), _rest::binary>> = data
-    parse_segment(first_segment)
+    # <<first_segment::binary-size(28), _rest::binary>> = data
+
+    result =
+      data
+      |> Stream.unfold(fn
+        <<chunk::binary-size(28), rest::bitstring>> -> {chunk, rest}
+        <<>> -> nil
+      end)
+      |> Enum.to_list()
+      |> Enum.map(fn x ->
+        case parse_segment(x) do
+          {:ok, segment} -> segment
+        end
+      end)
+
+    {:ok, result}
+
+    # parse_segment(first_segment)
   end
 
   defp parse_segment(<<

@@ -27,7 +27,8 @@ defmodule Xsens.MocapDataTest do
 
     assert byte_size(rest) == 644
 
-    {:ok, parsed_first_segment} = Xsens.MocapData.parse_message_body(rest)
+    {:ok, parsed_segments} = Xsens.MocapData.parse_message_body(rest)
+    parsed_first_segment = parsed_segments |> hd
     assert trunc(parsed_first_segment.x) == -467
   end
 end
