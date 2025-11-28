@@ -24,7 +24,7 @@ defmodule DMX.ArtnetFrameTest do
         "\x03\0" <>
         "\x02" <>
         "\x00" <>
-        "\x8A" <>
+        "\x22" <>
         :binary.copy(<<0>>, 511)
 
     assert DMX.ArtnetFrame.build_frame(%{1 => 34}, 1, 3) == target
