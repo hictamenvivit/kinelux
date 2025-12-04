@@ -31,4 +31,10 @@ defmodule Xsens.MocapDataTest do
     parsed_first_segment = parsed_segments |> hd
     assert trunc(parsed_first_segment.x) == -467
   end
+
+  test "I understand max and map correctly" do
+    example = [%{x: 7}, %{x: 9}]
+    assert Enum.map(example, &Map.get(&1, :x)) == [7, 9]
+    assert Enum.max(Enum.map(example, &Map.get(&1, :x))) == 9
+  end
 end

@@ -17,6 +17,7 @@ defmodule Visualisation.Dashboard do
   def handle_info(:update, state) do
     Process.send_after(self(), :update, 200)
     position = Bucket.get(:bucket)
+    # (position.segments |> hd).x |> IO.puts()
     # clear screen (ANSI escape)
     # IO.write("\e[H\e[2J")
     # IO.puts("\n\n\n=== Dashboard ===")

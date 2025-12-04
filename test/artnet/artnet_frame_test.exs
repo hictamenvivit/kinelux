@@ -33,4 +33,16 @@ defmodule DMX.ArtnetFrameTest do
   test "builds the Artnet frame body" do
     assert DMX.ArtnetFrame.build_frame_body(%{1 => 34}) == "\x22" <> :binary.copy(<<0>>, 511)
   end
+
+  test "build mapping" do
+    assert DMX.ArtnetServer.build_mapping([
+             {34, [2, 3]},
+             {42, [1, 5]}
+           ]) == %{
+             1 => 42,
+             2 => 34,
+             3 => 34,
+             5 => 42
+           }
+  end
 end

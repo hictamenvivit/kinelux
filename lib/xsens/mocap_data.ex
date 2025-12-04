@@ -30,7 +30,7 @@ defmodule Xsens.MocapData do
         end
       end)
 
-    {:ok, result}
+    {:ok, %{segments: result}}
 
     # parse_segment(first_segment)
   end
